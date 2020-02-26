@@ -59,9 +59,10 @@ class ServiceNowConnector {
     let getCallOptions = this.options;
     getCallOptions.method = 'GET';
     getCallOptions.query = 'sysparm_limit=1';
-    console.log(callback);
+    // console.log(callback);
+    console.log(getCallOptions);
     this.sendRequest(getCallOptions, (results, error) => callback(results, error));
-    // this.sendRequest(getCallOptions, (results, error), callback(results, error));
+    // console.log(callback);
   }
 
  /**
@@ -78,7 +79,7 @@ class ServiceNowConnector {
 constructUri(serviceNowTable, query = null) {
   let uri = `/api/now/table/${serviceNowTable}`;
   if (query) {
-    this.uri = uri + '?' + query;
+    uri = uri + '?' + query;
   }
   return uri;
 } 
@@ -209,10 +210,11 @@ constructUri(serviceNowTable, query = null) {
  *   Will be HTML text if hibernating instance.
  * @param {error} callback.error - The error property of callback.
  */
- post(callOptions, callback) {
-  callOptions.method = 'POST';
+ post(callback) {
+  let getCallOptions = this.options;
+  getCallOptions.method = 'POST';
   console.log(callback);
-  this.sendRequest(callOptions, (results, error) => callback(results, error));
+  this.sendRequest(getCallOptions, (results, error) => callback(results, error));
   console.log(callback);
  }
 

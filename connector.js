@@ -59,10 +59,7 @@ class ServiceNowConnector {
     let getCallOptions = this.options;
     getCallOptions.method = 'GET';
     getCallOptions.query = 'sysparm_limit=1';
-    // console.log(callback);
-    console.log(getCallOptions);
     this.sendRequest(getCallOptions, (results, error) => callback(results, error));
-    // console.log(callback);
   }
 
  /**
@@ -138,11 +135,6 @@ constructUri(serviceNowTable, query = null) {
     } else if (this.isHibernating(response) == true) {
       callbackError = 'Service Now instance is hibernating';
       console.error(callbackError);
-    /*
-    } else if (response.body.includes('Hibernating Instance')) {
-      callbackError = 'Service Now instance is hibernating';
-      console.error(callbackError);
-*/
     } else {
       callbackData = response;
       return callback(callbackData, callbackError);
@@ -213,9 +205,7 @@ constructUri(serviceNowTable, query = null) {
  post(callback) {
   let getCallOptions = this.options;
   getCallOptions.method = 'POST';
-  console.log(callback);
   this.sendRequest(getCallOptions, (results, error) => callback(results, error));
-  console.log(callback);
  }
 
 }

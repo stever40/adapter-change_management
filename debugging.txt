@@ -1,0 +1,2 @@
+AT command prompt enter:
+tail -f /var/log/pronghorn/* | egrep "ServiceNow"

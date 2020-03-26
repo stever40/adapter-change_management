@@ -115,10 +115,10 @@ healthcheck(callback) {
       * for the callback's errorMessage parameter.
       */
         this.emitOffline();
-        log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
+        // log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
         // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
         return error;
-
+        // return callback(error);  //doesn't work. Connection goes red
    } else {
      /**
       * Write this block.
@@ -132,7 +132,8 @@ healthcheck(callback) {
       */
         this.emitOnline()
         // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
-        return result;
+        return result; // works
+        //return callback(result);  //doesn't work. Connection goes red
    }
  });
 }
@@ -195,11 +196,10 @@ healthcheck(callback) {
       this.connector.get((data, error) => {
         if (error) {
           //console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-          return callback(error);
+        callback(error);
         }
         //console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`);
-        
-        return callback(data);
+        callback(data);
       });
     }    
     
@@ -220,13 +220,13 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-      this.post((data, error) => {
+      this.connector.post((data, error) => {
           if (error) {
             // console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
-            return callback(error);
+            callback(error);
           }
           // console.log(`\nResponse returned from POST request:\n${JSON.stringify(data)}`);
-          return callback(data);
+          callback(data);
         });    
     }
 

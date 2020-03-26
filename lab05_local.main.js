@@ -61,17 +61,15 @@ class ServiceNowAdapter extends EventEmitter {
     this.props = adapterProperties;
     // Instantiate an object from the connector.js module and assign it to an object property.
     this.connector = new ServiceNowConnector({
-      url: this.props.url,
-      username: this.props.auth.username,
-      password: this.props.auth.password,
-      serviceNowTable: this.props.serviceNowTable
+      // url: this.props.url,
+      // username: this.props.auth.username,
+      // password: this.props.auth.password,
+      // serviceNowTable: this.props.serviceNowTable
       // For local testing
-      /**
       url: 'https://dev94923.service-now.com/',
       username: 'admin',
       password: 'Payton01',
-      serviceNowTable: 'change_request'
-      **/
+      serviceNowTable: 'change_request'      
     });
   }
 
@@ -203,7 +201,6 @@ class ServiceNowAdapter extends EventEmitter {
 }
 module.exports = ServiceNowAdapter;
 
-/**
 // for testing) 
     
 function main() {
@@ -223,4 +220,3 @@ function main() {
 }
 
 main();
-**/

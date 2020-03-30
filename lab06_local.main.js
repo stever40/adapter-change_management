@@ -164,10 +164,39 @@ class ServiceNowAdapter extends EventEmitter {
           callback(error);
         }
             if (data.hasOwnProperty('body')) {
-              console.log(`\nResponse returned from GET before i change it :${JSON.stringify(data)}`);
+ /*             
+              // initial JSON
+// var ips = {ipId1: {}, ipId2: {}};
+var ips = {JSON.parse(data.body)};
+
+
+// Solution1
+Object.keys(ips).forEach(function(key) {
+  ips[key] = {name: 'value', anotherName: 'another value'};
+});
+
+*/
+/*
+// Solution 2
+Object.keys(ips).forEach(function(key) {
+  Object.assign(ips[key],{name: 'value', anotherName: 'another value'});
+}); */
+              var myObj = (JSON.parse(data.body));
+              
+              for (var i = 0; i < myObj.result.length; i += 1) {
+                      var x = myObj.result[i].number;
+                      console.log(x);
+                      }
+              
+              
+              console.log(`\nResponse returned from GET before i change it :${JSON.stringify(data.body)}`);
               var body_array = (JSON.parse(data.body));
+              // console.log(JSON.parse(data.body));
+              // console.log((`Accessing JSON Element ${body_array.result[0].number}`));
+              //cart.contents[1].productName )
               var num_results = body_array.result.length;
               var change_ticket = [];
+              //change_ticket = "{";
               for(var i = 0; i < num_results; i += 1) {
                 var result_array = (JSON.parse(data.body).result);
                 //var body_array = (JSON.parse(data.body));
@@ -175,9 +204,19 @@ class ServiceNowAdapter extends EventEmitter {
                 // var result_array = data.body;
                 // var change_ticket = { name: "John", age: 30, city: "New York" };
                 //var change_ticket = {};
+                
+               /* 
+                change_ticket = change_ticket + `"${i}" :` +
+                `{"change_ticket_number" : "${result_array[i].number}",
+                "active" : "${result_array[i].active}",
+                "priority" : "${result_array[i].priority}"
+                },`;
+                */
+                // to do someText = someText.replace(/(\r\n|\n|\r)/gm," ");
                 change_ticket.push({"change_ticket_number" : result_array[i].number, "active" : result_array[i].active, "priority" : result_array[i].priority,
                                    "description" : result_array[i].description, "work_start" : result_array[i].work_start, "work_end" : result_array[i].work_end,
                                    "change_ticket_key" : result_array[i].sys_id});
+                
                 // change_ticket.change_ticket_number = result_array[i].number; // rename number to change_ticket_number
                 /* change_ticket.active = result_array[i].active;
                 change_ticket.priority = result_array[i].priority;
@@ -193,13 +232,16 @@ class ServiceNowAdapter extends EventEmitter {
                 // console.log(`Response from POST ${data.body}`);
                 //console.log(`Response from POST ${change_ticket}`);
                 console.log(typeof(change_ticket));
+                // console.log(change_ticket);
                 console.log(JSON.stringify(change_ticket));
-                console.log(Object.keys(body_array).length);
+                // console.log(Object.keys(body_array).length);
 
               } 
-              // var json_change_ticket = {change_ticket};
-              callback(JSON.stringify(change_ticket));               
-              //callback(JSON.stringify(change_ticket));            
+              // change_ticket = change_ticket + "}";
+              console.log(change_ticket);
+              // console.log(JSON.parse(data.body).result);
+             // callback(JSON.parse(change_ticket));    // doesn't work           
+            callback(JSON.stringify(change_ticket));            
             }   
       
       
@@ -276,7 +318,7 @@ function main() {
   // test_ServiceNowAdapter.getRecord();
   
   test_ServiceNowAdapter.getRecord( (data, error) => {
-    console.log(`\nResponse returned from GET JSON.stringify request:${JSON.stringify(data)}`);
+   // console.log(`\nResponse returned from GET JSON.stringify request:${JSON.stringify(data)}`);
  console.log(`\nResponse returned from GET JSON.parse request:${data}`);  
     });
 /*  test_ServiceNowAdapter.postRecord( (data, error) => {

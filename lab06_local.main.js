@@ -98,12 +98,50 @@ class ServiceNowAdapter extends EventEmitter {
    * @param {ServiceNowAdapter~requestCallback} [callback] - The optional callback
    *   that handles the response.
    */
-  healthcheck(callback) {
-    // We will build this method in a later lab. For now, it will emulate
-    // a healthy integration by emmitting ONLINE.
-    this.emitOnline();
-  }
-
+healthcheck(callback) {
+ this.getRecord((result, error) => {
+   /**
+    * For this lab, complete the if else conditional
+    * statements that check if an error exists
+    * or the instance was hibernating. You must write
+    * the blocks for each branch.
+    */
+   if (error) {
+     /**
+      * Write this block.
+      * If an error was returned, we need to emit OFFLINE.
+      * Log the returned error using IAP's global log object
+      * at an error severity. In the log message, record
+      * this.id so an administrator will know which ServiceNow
+      * adapter instance wrote the log message in case more
+      * than one instance is configured.
+      * If an optional IAP callback function was passed to
+      * healthcheck(), execute it passing the error seen as an argument
+      * for the callback's errorMessage parameter.
+      */
+        this.emitOffline();
+        // log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
+        // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
+        return error;
+        // return callback(error);  //doesn't work. Connection goes red
+   } else {
+     /**
+      * Write this block.
+      * If no runtime problems were detected, emit ONLINE.
+      * Log an appropriate message using IAP's global log object
+      * at a debug severity.
+      * If an optional IAP callback function was passed to
+      * healthcheck(), execute it passing this function's result
+      * parameter as an argument for the callback function's
+      * responseData parameter.
+      */
+        this.emitOnline();
+        // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
+        return result; // works
+        //return callback(result);  //doesn't work. Connection goes red
+   }
+ });
+}
   /**
    * @memberof ServiceNowAdapter
    * @method emitOffline
@@ -113,7 +151,8 @@ class ServiceNowAdapter extends EventEmitter {
    */
   emitOffline() {
     this.emitStatus('OFFLINE');
-    log.warn('ServiceNow: Instance is unavailable.');
+    // log.warn('ServiceNow: Instance is unavailable.');
+    log.warn(`ServiceNow: Instance is unavailable or hibernating.  ID: stever ${this.id}`); // for debugging
   }
 
   /**
@@ -125,7 +164,8 @@ class ServiceNowAdapter extends EventEmitter {
    */
   emitOnline() {
     this.emitStatus('ONLINE');
-    log.info('ServiceNow: Instance is available.');
+    // log.info('ServiceNow: Instance is available.');
+    log.info(`ServiceNow: Instance is available.  ID: stever ${this.id}`); // + String(this.id)); //+ this.id);
   }
 
   /**
@@ -163,7 +203,6 @@ class ServiceNowAdapter extends EventEmitter {
           callback(error);
         }
             if (data.hasOwnProperty('body')) {
-              
               var body_array = (JSON.parse(data.body));
               var num_results = body_array.result.length;
               var changeTicket = [];
@@ -202,39 +241,13 @@ class ServiceNowAdapter extends EventEmitter {
             callback(error);
           }
             if (data.hasOwnProperty('body')) {
-              var body_array = (JSON.parse(data.body));
-              var num_results = Object.keys(body_array).length;
-              var change_ticket = {};
-              for(var i = 0; i < num_results; i += 1) {
-                var result_array = (JSON.parse(data.body).result);
-                //var body_array = (JSON.parse(data.body));
-                // var change_ticket = Array(result_array.result);
-                // var result_array = data.body;
-                // var change_ticket = { name: "John", age: 30, city: "New York" };
-                //var change_ticket = {};
-                change_ticket.change_ticket_number = result_array.number; // rename number to change_ticket_number
-                change_ticket.active = result_array.active;
-                change_ticket.priority = result_array.priority;
-                change_ticket.description = result_array.description;
-                change_ticket.work_start = result_array.work_start;
-                change_ticket.work_end = result_array.work_end;  
-                change_ticket.change_ticket_key = result_array.sys_id;  //rename sys_id to change_ticket_key */
-                //change_ticket.sys_domain_link = result_array.sys_domain.link; // just testing nested values
-              
-                // console.log('Begin From this.connector.post');
-                // console.log(change_ticket);
-                // console.log('End this.connector.post');
-                // console.log(`Response from POST ${data.body}`);
-                //console.log(`Response from POST ${change_ticket}`);
-                console.log(typeof(change_ticket));
-                console.log(JSON.stringify(change_ticket));
-                console.log(Object.keys(body_array).length);
-                console.log(`i: ${i}`);                
-                callback(JSON.stringify(change_ticket));
-              } 
-          }
-              
-         
+              var changeTicket = {};
+              var result_array = (JSON.parse(data.body).result);
+              changeTicket = ({"change_ticket_number" : result_array.number, "active" : result_array.active, "priority" : result_array.priority,
+                                   "description" : result_array.description, "work_start" : result_array.work_start, "work_end" : result_array.work_end,
+                                   "change_ticket_key" : result_array.sys_id});
+              callback(changeTicket); 
+            }             
         });    
     }
 
@@ -249,7 +262,7 @@ function main() {
   // test_ServiceNowAdapter.getRecord();
   
   test_ServiceNowAdapter.getRecord( (data, error) => {
-  // console.log(`\nResponse returned from GET JSON.stringify request:${JSON.stringify(data)}`);
+  console.log(`\nResponse returned from GET JSON.stringify request:${JSON.stringify(data)}`);
   // console.log(`\nResponse returned from GET JSON.parse request:${data}`);
     console.log(`Change Ticket: ${data[0].change_ticket_number}`);
                for (var i = 0; i < data.length; i += 1) {
@@ -257,39 +270,17 @@ function main() {
                       console.log(x);
                       }
  });
-/*  test_ServiceNowAdapter.postRecord( (data, error) => {
-      if (data.hasOwnProperty('body')) {
-        // console.log(`Has body`);
-        // console.log(JSON.parse(data.body).result);
-        // body_array = JSON.parse(data.body);
-        result_array = (JSON.parse(data.body).result);
-      
-        // console.log(data.body);
-        // console.log(typeof(body_array));
-        // console.log(typeof(result_array));
-      
-        // console.log(result_array);
-        const change_ticket = Array();
-        change_ticket.change_ticket_number = result_array.number; // rename number to change_ticket_number
-        change_ticket.active = result_array.active;
-        change_ticket.priority = result_array.priority;
-        change_ticket.description = result_array.description;
-        change_ticket.work_start = result_array.work_start;
-        change_ticket.work_end = result_array.work_end;  
-        change_ticket.change_ticket_key = result_array.sys_id;  //rename sys_id to change_ticket_key 
-        //change_ticket.sys_domain_link = result_array.sys_domain.link; // just testing nested values
-      
-        console.log(change_ticket);
-        return(change_ticket);
-      }
-    else {
-    console.log('Object returned from From this.connector.post');
-    console.log(data);      
-    }
-      
-    });
- */
-
+  
+   test_ServiceNowAdapter.postRecord( (data, error) => {
+  console.log(`\nResponse returned from GET JSON.stringify request:${JSON.stringify(data)}`);
+  // console.log(`\nResponse returned from GET JSON.parse request:${data}`);
+    console.log(`Change Ticket From Post: ${data.change_ticket_number}`);
+               for (var i = 0; i < data.length; i += 1) {
+                      var x = data[i].description;
+                      console.log(x);
+                      }
+ }); 
+  
 }
 
 main();

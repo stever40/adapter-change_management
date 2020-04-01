@@ -115,10 +115,10 @@ healthcheck(callback) {
       * for the callback's errorMessage parameter.
       */
         this.emitOffline();
-        // log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
+        log.info("ServiceNow: Instance is unavailable.  ID: stever"); // for debugging
         // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
         return error;
-        // return callback(error);  //doesn't work. Connection goes red
+        // callback(error);  //doesn't work. Connection goes red
    } else {
      /**
       * Write this block.
@@ -131,9 +131,10 @@ healthcheck(callback) {
       * responseData parameter.
       */
         this.emitOnline()
-        // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
+        log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
         return result; // works
-        //return callback(result);  //doesn't work. Connection goes red
+        // return callback(result);  //doesn't work. Connection goes red
+        // callback(result);
    }
  });
 }
@@ -148,7 +149,7 @@ healthcheck(callback) {
   emitOffline() {
     this.emitStatus('OFFLINE');
     // log.warn('ServiceNow: Instance is unavailable.');
-    log.error(`ServiceNow: Instance is unavailable.  ID: stever ${this.id}`); // for debugging
+    // log.error(`ServiceNow: Instance is unavailable.  ID: stever`); // for debugging
   }
 
   /**
@@ -161,7 +162,7 @@ healthcheck(callback) {
   emitOnline() {
     this.emitStatus('ONLINE');
     // log.info('ServiceNow: Instance is available.');
-    log.info(`ServiceNow: Instance is available.  ID: stever ${this.id}`) // + String(this.id)); //+ this.id);
+    // log.info(`ServiceNow: Instance is available.  ID: stever ${this.id}`) // + String(this.id)); //+ this.id);
   }
 
   /**
@@ -193,25 +194,31 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-      this.connector.get((data, error) => {
+    this.connector.get((data, error) => {
         if (error) {
-          console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-          callback(error);
-        }
+            console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
+            // callback(error);
+            return callback(data, error);
+        } else {
             if (data.hasOwnProperty('body')) {
-              var body_array = (JSON.parse(data.body));
-              var num_results = body_array.result.length;
-              var changeTicket = [];
+                var body_array = (JSON.parse(data.body));
+                var num_results = body_array.result.length;
+                var changeTicket = [];
 
-              for(var i = 0; i < num_results; i += 1) {
+                for(var i = 0; i < num_results; i += 1) {
                 var result_array = (JSON.parse(data.body).result);
                 changeTicket.push({"change_ticket_number" : result_array[i].number, "active" : result_array[i].active, "priority" : result_array[i].priority,
-                                   "description" : result_array[i].description, "work_start" : result_array[i].work_start, "work_end" : result_array[i].work_end,
-                                   "change_ticket_key" : result_array[i].sys_id});
-              } 
-            callback(changeTicket); 
-            }         
-      });
+                                    "description" : result_array[i].description, "work_start" : result_array[i].work_start, "work_end" : result_array[i].work_end,
+                                    "change_ticket_key" : result_array[i].sys_id});
+                
+                } 
+            // callback(changeTicket);
+            return callback(changeTicket, error);
+            } 
+          }         
+    });   
+    
+    
     }    
 
   /**
@@ -232,18 +239,21 @@ healthcheck(callback) {
      */
       this.connector.post((data, error) => {
           if (error) {
-            //console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
-            callback(error);
-          }
-            if (data.hasOwnProperty('body')) {
-              var changeTicket = {};
-              var result_array = (JSON.parse(data.body).result);
-              changeTicket = ({"change_ticket_number" : result_array.number, "active" : result_array.active, "priority" : result_array.priority,
-                                   "description" : result_array.description, "work_start" : result_array.work_start, "work_end" : result_array.work_end,
-                                   "change_ticket_key" : result_array.sys_id});
-              callback(changeTicket); 
-            }             
-        });    
+            console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
+            // callback(error);
+            return callback(data, error);
+          } else {
+              if (data.hasOwnProperty('body')) {
+                var changeTicket = {};
+                var result_array = (JSON.parse(data.body).result);
+                changeTicket = ({"change_ticket_number" : result_array.number, "active" : result_array.active, "priority" : result_array.priority,
+                                     "description" : result_array.description, "work_start" : result_array.work_start, "work_end" : result_array.work_end,
+                                     "change_ticket_key" : result_array.sys_id});
+                // callback(changeTicket);
+                return callback(changeTicket, error); 
+              }
+            }  
+      });    
     }
 
 }

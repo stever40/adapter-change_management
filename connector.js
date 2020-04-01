@@ -129,12 +129,14 @@ constructUri(serviceNowTable, query = null) {
     if (error) {
       console.error('Error present.');
       callbackError = error;
+      return callback(callbackData, callbackError);       
     } else if (!validResponseRegex.test(response.statusCode)) {
       console.error('Bad response code.');
       callbackError = response;
+      return callback(callbackData, callbackError);       
     } else if (this.isHibernating(response) == true) {
       callbackError = 'Service Now instance is hibernating';
-      console.error(callbackError);
+      // console.error(callbackError);
     } else {
       callbackData = response;
       return callback(callbackData, callbackError);

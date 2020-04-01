@@ -80,7 +80,7 @@ class ServiceNowAdapter extends EventEmitter {
   connect() {
     // As a best practice, Itential recommends isolating the health check action
     // in its own method.
-    this.healthcheck();
+    this.healthcheck(callback);
   }
 
 /**

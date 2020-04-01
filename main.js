@@ -132,7 +132,10 @@ healthcheck(callback) {
       */
         this.emitOnline()
         // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
-        return result; // works
+          if (callback) {
+            return callback(responseData);
+          }        
+        // return result; // works
         //return callback(result);  //doesn't work. Connection goes red
    }
  });
@@ -148,7 +151,7 @@ healthcheck(callback) {
   emitOffline() {
     this.emitStatus('OFFLINE');
     // log.warn('ServiceNow: Instance is unavailable.');
-    log.error(`ServiceNow: Instance is unavailable.  ID: stever ${this.id}`); // for debugging
+    log.error(`ServiceNow: Instance is unavailable and OFFLINE!.  ID: stever ${this.id}`); // for debugging
   }
 
   /**
@@ -161,7 +164,7 @@ healthcheck(callback) {
   emitOnline() {
     this.emitStatus('ONLINE');
     // log.info('ServiceNow: Instance is available.');
-    log.info(`ServiceNow: Instance is available.  ID: stever ${this.id}`) // + String(this.id)); //+ this.id);
+    log.info(`ServiceNow: Instance is available and ONLINE!.  ID: stever ${this.id}`) // + String(this.id)); //+ this.id);
   }
 
   /**
@@ -196,7 +199,7 @@ healthcheck(callback) {
       this.connector.get((data, error) => {
         if (error) {
           console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-          callback(error);
+          callback(data, error);
         }
             if (data.hasOwnProperty('body')) {
               var body_array = (JSON.parse(data.body));
@@ -209,7 +212,7 @@ healthcheck(callback) {
                                    "description" : result_array[i].description, "work_start" : result_array[i].work_start, "work_end" : result_array[i].work_end,
                                    "change_ticket_key" : result_array[i].sys_id});
               } 
-            callback(changeTicket); 
+            callback(changeTicket, error); 
             }         
       });
     }    
@@ -233,7 +236,7 @@ healthcheck(callback) {
       this.connector.post((data, error) => {
           if (error) {
             //console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
-            callback(error);
+            callback(data, error);
           }
             if (data.hasOwnProperty('body')) {
               var changeTicket = {};
@@ -241,7 +244,7 @@ healthcheck(callback) {
               changeTicket = ({"change_ticket_number" : result_array.number, "active" : result_array.active, "priority" : result_array.priority,
                                    "description" : result_array.description, "work_start" : result_array.work_start, "work_end" : result_array.work_end,
                                    "change_ticket_key" : result_array.sys_id});
-              callback(changeTicket); 
+              callback(changeTicket, error); 
             }             
         });    
     }

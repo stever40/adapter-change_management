@@ -64,6 +64,7 @@ class ServiceNowAdapter extends EventEmitter {
       url: this.props.url,
       username: this.props.auth.username,
       password: this.props.auth.password,
+      // password: "This is a Bad Password",  // emulates error for testing      
       serviceNowTable: this.props.serviceNowTable
     });
   }
@@ -115,15 +116,10 @@ healthcheck(callback) {
       * for the callback's errorMessage parameter.
       */
         this.emitOffline();
-        // log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
-        // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
-        
-          if (callback) {
+        log.error(`ServiceNow: Instance is unavailable and OFFLINE!  ID: stever. Adapater ID: ${this.id}, Error Detail: ${JSON.stringify(error)}`); // for debugging
+            if (callback) {
             callback(errorMessage);
             }         
-        
-        // return error;
-        // return callback(error);  //doesn't work. Connection goes red
    } else {
      /**
       * Write this block.
@@ -203,7 +199,6 @@ healthcheck(callback) {
      */
       this.connector.get((data, error) => {
         if (error) {
-          console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
           callback(data, error);
         } else {
             if (data.hasOwnProperty('body')) {

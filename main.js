@@ -117,7 +117,12 @@ healthcheck(callback) {
         this.emitOffline();
         // log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
         // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
-        return error;
+        
+          if (callback) {
+            callback(errorMessage);
+            }         
+        
+        // return error;
         // return callback(error);  //doesn't work. Connection goes red
    } else {
      /**
@@ -133,7 +138,7 @@ healthcheck(callback) {
         this.emitOnline()
         // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
           if (callback) {
-            return callback(responseData);
+             callback(responseData);
           }        
         // return result; // works
         //return callback(result);  //doesn't work. Connection goes red

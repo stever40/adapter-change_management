@@ -64,7 +64,6 @@ class ServiceNowAdapter extends EventEmitter {
       url: this.props.url,
       username: this.props.auth.username,
       password: this.props.auth.password,
-      // password: "Payton",
       serviceNowTable: this.props.serviceNowTable
     });
   }

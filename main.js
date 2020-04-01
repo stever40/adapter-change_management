@@ -64,6 +64,7 @@ class ServiceNowAdapter extends EventEmitter {
       url: this.props.url,
       username: this.props.auth.username,
       password: this.props.auth.password,
+      // password: "Payton",
       serviceNowTable: this.props.serviceNowTable
     });
   }
@@ -205,7 +206,7 @@ healthcheck(callback) {
         if (error) {
           console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
           callback(data, error);
-        }
+        } else {
             if (data.hasOwnProperty('body')) {
               var body_array = (JSON.parse(data.body));
               var num_results = body_array.result.length;
@@ -218,7 +219,8 @@ healthcheck(callback) {
                                    "change_ticket_key" : result_array[i].sys_id});
               } 
             callback(changeTicket, error); 
-            }         
+            }
+          } 
       });
     }    
 
@@ -242,7 +244,7 @@ healthcheck(callback) {
           if (error) {
             //console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
             callback(data, error);
-          }
+          } else {
             if (data.hasOwnProperty('body')) {
               var changeTicket = {};
               var result_array = (JSON.parse(data.body).result);
@@ -250,7 +252,8 @@ healthcheck(callback) {
                                    "description" : result_array.description, "work_start" : result_array.work_start, "work_end" : result_array.work_end,
                                    "change_ticket_key" : result_array.sys_id});
               callback(changeTicket, error); 
-            }             
+            } 
+           }            
         });    
     }
 

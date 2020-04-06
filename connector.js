@@ -93,7 +93,8 @@ constructUri(serviceNowTable, query = null) {
  * @return {boolean} Returns true if instance is hibernating. Otherwise returns false.
  */
  isHibernating(response) {
-  return response.body.includes('Hibernating Instance')
+  // return response.body.includes('Hibernating Instance')
+  return response.body.includes('ibernat') // ServiceNow changed hibernation message  
   && response.body.includes('<html>')
   && response.statusCode === 200;
  }

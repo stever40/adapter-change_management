@@ -164,7 +164,7 @@ healthcheck(callback) {
     this.emitStatus('OFFLINE');
     // log.warn('ServiceNow: Instance is unavailable.');
     // log.error(`ServiceNow: Instance is unavailable and OFFLINE!.  ID: stever ${this.id}`); // for debugging
-    console.log(`ServiceNow: Instance is unavailable and OFFLINE!.  ID: stever ${this.id}`); // for debugging
+    console.log(`ServiceNow: Instance is unavailable and OFFLINE!.  ID: stever`); // for debugging
   }
 
   /**
@@ -178,7 +178,7 @@ healthcheck(callback) {
     this.emitStatus('ONLINE');
     // log.info('ServiceNow: Instance is available.');
     // log.info(`ServiceNow: Instance is available and ONLINE!.  ID: stever ${this.id}`); // + String(this.id)); //+ this.id);
-    console.log(`ServiceNow: Instance is available and ONLINE!.  ID: stever ${this.id}`); // + String(this.id)); //+ this.id);    
+    console.log(`ServiceNow: Instance is available and ONLINE!.  ID: stever`); // + String(this.id)); //+ this.id);    
   }
 
   /**
@@ -274,15 +274,16 @@ function main() {
   console.log(`\nFrom main() function`);
   var test_ServiceNowAdapter = new ServiceNowAdapter();
   // test_ServiceNowAdapter.getRecord();
-  //test_ServiceNowAdapter.connect();
+ // test_ServiceNowAdapter.connect();
   //console.log(`\ntest_ServiceNowAdapter.connect() Complete`); 
 
+  
   test_ServiceNowAdapter.getRecord( (data, error) => {
        console.log(`\nResponse returned from GET data JSON.stringify request:${JSON.stringify(data)}`);
        console.log(`\nResponse returned from GET error JSON.stringify request:${JSON.stringify(error)}`);
   // console.log(`\nResponse returned from GET JSON.parse request:${data}`);
    //console.log(`Change Ticket: ${data[0].change_ticket_number}`);
-               /*
+        /*       
                for (var i = 0; i < data.length; i += 1) {
                       var x = data[i].description;
                       console.log(x);
@@ -290,7 +291,6 @@ function main() {
  */
  });
 
- 
  
    test_ServiceNowAdapter.postRecord( (data, error) => {
         console.log(`\nResponse returned from POST data JSON.stringify request:${JSON.stringify(data)}`);

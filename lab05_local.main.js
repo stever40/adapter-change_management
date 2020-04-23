@@ -68,7 +68,7 @@ class ServiceNowAdapter extends EventEmitter {
       // For local testing
       url: 'https://dev94923.service-now.com/',
       username: 'admin',
-      password: 'Payton01',
+      password: '',
       serviceNowTable: 'change_request'      
     });
   }
